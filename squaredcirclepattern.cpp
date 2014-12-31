@@ -157,7 +157,7 @@ float SquaredCirclePattern::getMinCellRatio() const
 
 float SquaredCirclePattern::getMaxPatternRatio() const
 {
-	return m_impl->getMaxPatternRatio();
+	return m_impl->getMaxPattegetNNOrderrnRatio();
 }
 
 float SquaredCirclePattern::getMinPatternRatio() const
@@ -379,20 +379,16 @@ static inline void removePoint(vector<Point> &corners, int i0)
 	corners.pop_back();
 }
 
-static inline int getNNOrder(const Point2f p, int &x, int &y)
+static inline bool getNNOrder(const Point2f p, const Size patternSize, int &x, int &y)
 {
-	int iWidth = x-1;
-	int iHeight = y-1;
-
 	x = cvRound(p.x/100.0);
 	y = cvRound(p.y/100.0);
 
-	if (x >= 0 && x <= iWidth && y >= 0 && y <= iHeight)
+	if (x >= 0 && x < patternSize.width && y >= 0 && y < patternSize.height)
 	{
-		return 0;
+		return true;
 	}
-
-	return -1;
+	return false;
 }
 
 static void findCorners(const vector<Point> &pts, vector<Point> &corners)
@@ -506,15 +502,13 @@ vector<Point> SquaredCirclePatternImpl::findOrder_naive(const Mat &binary, vecto
 	// save order
 	for (size_t i = 0; i < ptsT.size(); ++i)
 	{
-		int x = m_patternSize.width;
-		int y = m_patternSize.height;
-		
-		if (0 == getNNOrder(ptsT[i], x, y))
+		int x, y;
+		if (getNNOrder(ptsT[i], m_patternSize, x, y))
 		{
 			orderedPts[x+y*m_patternSize.width] = pts[i];
 		}
 		else
-                {
+		{
 			return vector<Point>();
 		}
 	}
