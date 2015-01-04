@@ -157,7 +157,7 @@ float SquaredCirclePattern::getMinCellRatio() const
 
 float SquaredCirclePattern::getMaxPatternRatio() const
 {
-	return m_impl->getMaxPattegetNNOrderrnRatio();
+	return m_impl->getMaxPatternRatio();
 }
 
 float SquaredCirclePattern::getMinPatternRatio() const
