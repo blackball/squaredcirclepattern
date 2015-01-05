@@ -379,15 +379,16 @@ static inline void removePoint(vector<Point> &corners, int i0)
 	corners.pop_back();
 }
 
-static inline int getNNOrder(const Point2f p, int &x, int &y)
+static inline bool getNNOrder(const Point2f p, const Size patternSize, int &x, int &y)
 {
 	x = cvRound(p.x/100.0);
 	y = cvRound(p.y/100.0);
-	if (x >= 0 && x <= 7 && y >= 0 && y <= 4)
+
+	if (x >= 0 && x < patternSize.width && y >= 0 && y < patternSize.height)
 	{
-		return 0;
+		return true;
 	}
-	return -1;
+	return false;
 }
 
 static void findCorners(const vector<Point> &pts, vector<Point> &corners)
@@ -502,12 +503,12 @@ vector<Point> SquaredCirclePatternImpl::findOrder_naive(const Mat &binary, vecto
 	for (size_t i = 0; i < ptsT.size(); ++i)
 	{
 		int x, y;
-		if (0 == getNNOrder(ptsT[i], x, y))
-                {
-			orderedPts[x+y*8] = pts[i];
+		if (getNNOrder(ptsT[i], m_patternSize, x, y))
+		{
+			orderedPts[x+y*m_patternSize.width] = pts[i];
 		}
 		else
-                {
+		{
 			return vector<Point>();
 		}
 	}
